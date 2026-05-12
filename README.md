@@ -1,3 +1,18 @@
+<<<<<<< copilot/add-minimal-web-ide-frontend
+# Blank-IDE
+AI Native Blank IDE+ World Middleware Runtime
+
+## Minimal web frontend
+A minimal web IDE frontend and API route prototype is available in `/web`.
+
+Run it locally:
+
+```bash
+node web/server.js
+```
+
+Then open `http://localhost:3000`.
+=======
 # world-platform
 
 > **AINative Blank IDE + World Middleware Runtime**
@@ -234,3 +249,4 @@ Open `examples/demo.ipynb` in Jupyter, set your `API_KEY`, then run all cells in
 ## License
 
 MIT
+>>>>>>> main
