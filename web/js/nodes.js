@@ -7,7 +7,7 @@ const Nodes = {
       label: 'Cell',
       icon: '📦',
       color: '#1f2937',
-      params: ['code', 'description'],
+      params: ['model', 'description'],
     },
     input: {
       label: 'Input',
