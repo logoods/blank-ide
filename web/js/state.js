@@ -91,6 +91,9 @@ const GraphState = {
   // Selection
   selectNode(id) {
     this.selectedNodeId = id;
+    // 通知 app.js 等监听者
+    const node = this.nodes[id];
+    document.dispatchEvent(new CustomEvent('node-selected', { detail: node || null }));
   },
 
   deselectNode() {

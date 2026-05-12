@@ -66,6 +66,67 @@ const API = {
       throw error;
     }
   },
+
+  // ── LLM Config API ──────────────────────────────────────────
+  async getConfig() {
+    return this.fetchJSON('/api/config');
+  },
+
+  async setConfig(cfg) {
+    return this.fetchJSON('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cfg),
+    });
+  },
+
+  // ── Evolution API ─────────────────────────────────────────
+  async evolve(request = '') {
+    return this.fetchJSON('/api/evolve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ request }),
+    });
+  },
+
+  async listEvolutions() {
+    return this.fetchJSON('/api/evolve/list');
+  },
+
+  async observe(entry) {
+    return this.fetchJSON('/api/observe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    });
+  },
+
+  async getWorldState() {
+    return this.fetchJSON('/api/world');
+  },
+
+  async setWorldState(kv) {
+    return this.fetchJSON('/api/world', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(kv),
+    });
+  },
+
+  // ── Magic Commands API ────────────────────────────────────
+  async listMagics() {
+    return this.fetchJSON('/api/magic');
+  },
+
+  async runMagic(name, line = '', cell = null) {
+    const body = { name, line };
+    if (cell !== null) body.cell = cell;
+    return this.fetchJSON('/api/magic/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  },
 };
 
 // Wire up workflow run button to execute graph

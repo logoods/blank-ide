@@ -31,8 +31,18 @@ Thumbs.db
 .env
 *.env
 secrets.json
+llm_config.json
 
 # Logs / memory
 *.log
 memory_*.json
 world_memory.json
+
+# IDE evolution runtime artifacts
+# (generated extensions are user-specific; keep only the __init__.py stub)
+runtime/ide_extensions/*.py
+!runtime/ide_extensions/__init__.py
+runtime/ide_extensions/_history.json
+
+# Browser localStorage is client-side, but if pyserver ever persists config:
+web/pyserver_config.json

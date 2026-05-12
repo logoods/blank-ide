@@ -3,6 +3,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+const PY_PORT = Number(process.env.PY_PORT || 3001);
+
 const WEB_ROOT = __dirname;
 const PORT = Number(process.env.PORT || 3000);
 const MAX_BODY_BYTES = 1024 * 1024;
@@ -168,6 +170,14 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // ── Evolution / World / Config API: proxy to Python server ──────
+    const pyRoutes = ['/api/evolve', '/api/observe', '/api/world', '/api/config', '/api/magic'];
+    const reqPath = new URL(req.url, 'http://localhost').pathname;
+    if (pyRoutes.some((r) => reqPath === r || reqPath.startsWith(r + '/'))) {
+      proxyToPython(req, res);
+      return;
+    }
+
     serveStatic(req, res);
   } catch (error) {
     sendJSON(res, 400, { error: error.message });
@@ -176,4 +186,24 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`world-platform web IDE listening on http://localhost:${PORT}`);
+  console.log(`Evolution API proxied to http://127.0.0.1:${PY_PORT} (start: python web/pyserver.py)`);
 });
+
+// ── Proxy to Python evolution server ────────────────────────────────────────
+function proxyToPython(req, res) {
+  const options = {
+    hostname: '127.0.0.1',
+    port: PY_PORT,
+    path: req.url,
+    method: req.method,
+    headers: { ...req.headers, host: `127.0.0.1:${PY_PORT}` },
+  };
+  const proxy = http.request(options, (pyRes) => {
+    res.writeHead(pyRes.statusCode, pyRes.headers);
+    pyRes.pipe(res);
+  });
+  proxy.on('error', () => {
+    sendJSON(res, 503, { error: 'Evolution server not running. Start: python web/pyserver.py' });
+  });
+  req.pipe(proxy);
+}

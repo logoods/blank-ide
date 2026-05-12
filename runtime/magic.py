@@ -72,7 +72,7 @@ def _get_llm():
     return LLMClient(
         model=os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
         api_key=os.environ.get("DEEPSEEK_API_KEY", ""),
-        base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+        base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
     )
 
 

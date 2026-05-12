@@ -65,18 +65,20 @@ _CODEGEN_PROMPT = """你是一个 IDE 扩展开发 Agent。
 """
 
 
-def evolve(request: str, world_context: str, ipython) -> dict:
+def evolve(request: str, world_context: str, ipython, llm=None) -> dict:
     """
     主入口：用自然语言描述新功能，生成并注册到 IDE。
     返回 {"name": str, "code": str, "success": bool, "error": str}
+    llm: 可选的 LLMClient 实例；为 None 时从环境变量构建。
     """
     from agents.llm_client import LLMClient
 
-    llm = LLMClient(
-        model=os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
-        api_key=os.environ.get("DEEPSEEK_API_KEY", ""),
-        base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
-    )
+    if llm is None:
+        llm = LLMClient(
+            model=os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
+            api_key=os.environ.get("DEEPSEEK_API_KEY", ""),
+            base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
+        )
 
     # 1. LLM 生成代码
     prompt = _CODEGEN_PROMPT.format(

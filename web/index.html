@@ -13,8 +13,44 @@
         <input id="workflowName" type="text" value="default-workflow" />
         <button id="runWorkflowBtn">▶ Run Workflow</button>
         <button id="saveWorkflowBtn">💾 Save Graph</button>
+        <button id="evolveBtn" class="btn-evolve">🧬 Evolve IDE</button>
+        <button id="configBtn" class="btn-config" title="LLM Configuration">⚙ LLM</button>
       </div>
     </header>
+
+    <!-- LLM Config Modal -->
+    <div id="configModal" class="modal-overlay" hidden>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>⚙ LLM Configuration</h2>
+          <button id="configCloseBtn" class="btn-icon">✕</button>
+        </div>
+
+        <label class="cfg-label">Provider</label>
+        <select id="cfgProvider" class="cfg-input">
+          <option value="deepseek">DeepSeek</option>
+          <option value="openai">OpenAI / GPT</option>
+          <option value="claude">Anthropic / Claude</option>
+          <option value="qwen">Qwen (Alibaba)</option>
+          <option value="ollama">Ollama (local)</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <label class="cfg-label">Model</label>
+        <input id="cfgModel" type="text" class="cfg-input" placeholder="e.g. deepseek-chat" />
+
+        <label class="cfg-label">API Key</label>
+        <input id="cfgApiKey" type="password" class="cfg-input" placeholder="sk-…" autocomplete="off" />
+
+        <label class="cfg-label">Base URL <span class="cfg-hint">(leave blank for provider default)</span></label>
+        <input id="cfgBaseUrl" type="text" class="cfg-input" placeholder="https://api.deepseek.com" />
+
+        <div class="modal-footer">
+          <span id="cfgStatus" class="cfg-status"></span>
+          <button id="cfgSaveBtn" class="btn-evolve">💾 Save &amp; Apply</button>
+        </div>
+      </div>
+    </div>
 
     <main class="ide-layout">
       <!-- Left Panel: Node Palette -->
@@ -32,6 +68,10 @@
           <button id="clearCanvasBtn" class="btn-sm">🗑️ Clear</button>
           <button id="fitViewBtn" class="btn-sm">🎯 Fit View</button>
         </div>
+        <div class="panel-section" id="worldStatePanel">
+          <h3>🌐 World State</h3>
+          <div id="worldStateContent" class="world-state-list"><span class="muted">Loading…</span></div>
+        </div>
       </aside>
 
       <!-- Center Panel: Canvas -->
@@ -39,11 +79,42 @@
         <div id="canvas" class="whiteboard-canvas"></div>
       </section>
 
-      <!-- Right Panel: Inspector -->
+      <!-- Right Panel: Inspector + Evolution -->
       <aside class="right-panel panel">
         <h2>Inspector</h2>
         <div id="inspectorContent">
           <p class="empty-message">Select a node to edit</p>
+        </div>
+
+        <!-- Evolution Panel -->
+        <div class="panel-section" id="evolutionPanel">
+          <h3>🧬 IDE Evolution</h3>
+          <textarea id="evolveRequest" rows="3" placeholder="Describe a new IDE capability (leave blank for auto)…"></textarea>
+          <button id="evolveSubmitBtn" class="btn-evolve" style="width:100%;margin-top:6px">✨ Evolve</button>
+          <div id="evolveStatus" class="evolve-status"></div>
+          <div id="evolveHistory" class="evolve-history"></div>
+        </div>
+
+        <!-- JSON Import Panel -->
+        <div class="panel-section" id="jsonImportPanel">
+          <h3>📥 JSON Import</h3>
+          <textarea id="jsonImportInput" rows="5" placeholder='Paste JSON here…&#10;[{"type":"cell","label":"My Cell","params":{"model":"gpt-4o"}}]&#10;or a full workflow export'></textarea>
+          <button id="jsonImportBtn" style="width:100%;margin-top:6px">⚡ Import Nodes</button>
+          <div id="jsonImportStatus" class="evolve-status"></div>
+        </div>
+
+        <!-- Magic REPL Panel -->
+        <div class="panel-section" id="magicPanel">
+          <h3>✨ Magic Commands</h3>
+          <div id="magicList" class="magic-list"><span class="muted">Loading…</span></div>
+          <div class="magic-run-row">
+            <span class="magic-percent">%</span>
+            <input id="magicName" type="text" class="cfg-input" placeholder="run_workflow" />
+          </div>
+          <input id="magicLine" type="text" class="cfg-input" style="margin-top:4px" placeholder="line arg (optional)" />
+          <textarea id="magicCell" rows="2" class="cfg-input" style="margin-top:4px;resize:vertical" placeholder="cell body for %%cmd (optional)"></textarea>
+          <button id="magicRunBtn" style="width:100%;margin-top:6px">▶ Run Magic</button>
+          <pre id="magicOutput" class="magic-output"></pre>
         </div>
       </aside>
     </main>

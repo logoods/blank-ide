@@ -1,85 +1,59 @@
-import requests
 import json
 import re
 from typing import Generator, Optional, Type, TypeVar
 from pydantic import BaseModel
+from openai import OpenAI
 
 T = TypeVar("T", bound=BaseModel)
 
 
 class LLMClient:
     """
-    统一大模型接口：
-    - DeepSeek
-    - GPT
-    - Qwen
-    - Claude
-    - 本地模型（vLLM / LM Studio / Ollama）
+    统一大模型接口（基于 openai 库，兼容 DeepSeek / GPT / Qwen / 本地模型）。
+    base_url 只需填到 /v1，openai 库自动拼 /chat/completions。
     """
 
     def __init__(self, model: str, api_key: Optional[str] = None, base_url: Optional[str] = None):
         self.model = model
-
-        # 默认 DeepSeek
-        self.base_url = base_url or "https://api.deepseek.com"
-        self.api_key = api_key or ""
+        raw = (base_url or "https://api.deepseek.com/v1").rstrip("/")
+        for suffix in ("/chat/completions", "/completions"):
+            if raw.endswith(suffix):
+                raw = raw[: -len(suffix)]
+                break
+        self.base_url = raw
+        self._client = OpenAI(
+            api_key=api_key or "none",
+            base_url=self.base_url,
+            timeout=60.0,       # 连接 + 读取总超时 60s
+            max_retries=1,
+        )
 
     # -------------------------
     # 非流式调用
     # -------------------------
     def complete(self, prompt: str, temperature: float = 0.7) -> str:
-        url = f"{self.base_url}/chat/completions"
-
-        payload = {
-            "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": temperature,
-            "stream": False,
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}",
-        }
-
-        resp = requests.post(url, headers=headers, data=json.dumps(payload))
-        resp.raise_for_status()
-
-        data = resp.json()
-        return data["choices"][0]["message"]["content"]
+        resp = self._client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+            stream=False,
+        )
+        return resp.choices[0].message.content
 
     # -------------------------
     # 流式调用
     # -------------------------
     def stream(self, prompt: str, temperature: float = 0.7) -> Generator[str, None, None]:
-        url = f"{self.base_url}/chat/completions"
-
-        payload = {
-            "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": temperature,
-            "stream": True,
-        }
-
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}",
-        }
-
-        with requests.post(url, headers=headers, data=json.dumps(payload), stream=True) as resp:
-            resp.raise_for_status()
-
-            for line in resp.iter_lines():
-                if not line:
-                    continue
-                if line.startswith(b"data: "):
-                    chunk = line[len(b"data: "):].decode("utf-8")
-                    if chunk == "[DONE]":
-                        break
-                    data = json.loads(chunk)
-                    delta = data["choices"][0]["delta"].get("content", "")
-                    if delta:
-                        yield delta
+        stream = self._client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+            stream=True,
+        )
+        for chunk in stream:
+            delta = chunk.choices[0].delta.content
+            if delta:
+                yield delta
 
     # -------------------------------------------------------
     # 结构化输出：LLM 返回 Pydantic 模型实例
