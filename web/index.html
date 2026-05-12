@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>world-platform IDE</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>world-platform IDE</h1>
+      <div class="workflow-controls">
+        <input id="workflowName" type="text" value="default-workflow" />
+        <button id="runWorkflowBtn">Run Workflow</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel ide-panel">
+        <h2>Web IDE</h2>
+        <textarea id="cellCode" rows="12" placeholder="Write code or instructions for this cell..."></textarea>
+      </section>
+
+      <section class="panel runner-panel">
+        <h2>Cell Runner Panel</h2>
+        <button id="runCellBtn">Run Cell</button>
+        <pre id="cellOutput">No cell run yet.</pre>
+      </section>
+
+      <section class="panel schema-panel">
+        <h2>Visual Schema Inspector</h2>
+        <ul id="schemaTree"></ul>
+      </section>
+
+      <section class="panel world-panel">
+        <h2>World State Viewer</h2>
+        <pre id="worldState">Loading...</pre>
+      </section>
+
+      <section class="panel workflow-panel">
+        <h2>Workflow Runs</h2>
+        <pre id="workflowResult">No workflow run yet.</pre>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
