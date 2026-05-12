@@ -1,19 +1,4 @@
-<<<<<<< copilot/add-minimal-web-ide-frontend
-# Blank-IDE
-AI Native Blank IDE+ World Middleware Runtime
-
-## Minimal web frontend
-A minimal web IDE frontend and API route prototype is available in `/web`.
-
-Run it locally:
-
-```bash
-node web/server.js
-```
-
-Then open `http://localhost:3000`.
-=======
-# world-platform
+# Blank-IDE / world-platform
 
 > **AINative Blank IDE + World Middleware Runtime**
 >
@@ -243,10 +228,25 @@ Open `examples/demo.ipynb` in Jupyter, set your `API_KEY`, then run all cells in
 - [ ] Web IDE — Blank IDE 前端 / Frontend
 - [ ] Agent Store
 - [ ] Workflow 可视化 / Workflow visualizer
+- [x] Web IDE — Blank IDE 前端 / Frontend (Whiteboard Canvas MVP)
+
+---
+
+## Minimal web frontend
+A minimal web IDE frontend and API route prototype is available in `/web`.
+
+Run it locally:
+
+```bash
+node web/server.js
+```
+
+Then open `http://localhost:3000`.
+
+See [`WHITEBOARD_CANVAS.md`](WHITEBOARD_CANVAS.md) for full documentation of the whiteboard canvas feature.
 
 ---
 
 ## License
 
 MIT
->>>>>>> main

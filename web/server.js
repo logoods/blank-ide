@@ -9,8 +9,14 @@ const MAX_BODY_BYTES = 1024 * 1024;
 const STATIC_FILES = {
   '/': 'index.html',
   '/index.html': 'index.html',
-  '/app.js': 'app.js',
   '/styles.css': 'styles.css',
+  '/js/state.js': 'js/state.js',
+  '/js/canvas.js': 'js/canvas.js',
+  '/js/nodes.js': 'js/nodes.js',
+  '/js/edges.js': 'js/edges.js',
+  '/js/ui.js': 'js/ui.js',
+  '/js/api.js': 'js/api.js',
+  '/js/app.js': 'js/app.js',
 };
 
 const schema = {
