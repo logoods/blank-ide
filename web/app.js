@@ -1,3 +1,5 @@
+const AUTO_REFRESH_INTERVAL_MS = 3000;
+
 async function fetchJSON(url, options) {
   const response = await fetch(url, options);
   const data = await response.json();
@@ -75,9 +77,8 @@ document.getElementById('refreshSchemaBtn').addEventListener('click', async () =
 
 let autoRefreshTimer = null;
 
-function renderWorldStateKV(state, container, depth) {
+function renderWorldStateKV(state, container, depth = 0) {
   container.innerHTML = '';
-  depth = depth || 0;
 
   Object.entries(state).forEach(([key, value]) => {
     const row = document.createElement('div');
@@ -156,7 +157,7 @@ document.getElementById('refreshWorldBtn').addEventListener('click', refreshWorl
 
 document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
   if (e.target.checked) {
-    autoRefreshTimer = setInterval(refreshWorldState, 3000);
+    autoRefreshTimer = setInterval(refreshWorldState, AUTO_REFRESH_INTERVAL_MS);
   } else {
     clearInterval(autoRefreshTimer);
     autoRefreshTimer = null;
@@ -188,7 +189,8 @@ document.getElementById('importWorldInput').addEventListener('change', (e) => {
     try {
       const state = JSON.parse(ev.target.result);
       renderWorldStateKV(state, document.getElementById('worldStateKV'));
-    } catch {
+    } catch (err) {
+      console.error('Failed to parse imported JSON:', err);
       alert('Invalid JSON file.');
     }
   };
@@ -285,7 +287,7 @@ document.getElementById('runCellBtn').addEventListener('click', async () => {
   }
 });
 
-// ─── Initialise ───────────────────────────────────────────────────────────────
+// ─── Initialize ───────────────────────────────────────────────────────────────
 
 async function loadInitialData() {
   const [schema, world] = await Promise.all([
