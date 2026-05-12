@@ -11,7 +11,7 @@
       <h1>world-platform IDE</h1>
       <div class="workflow-controls">
         <input id="workflowName" type="text" value="default-workflow" />
-        <button id="runWorkflowBtn">Run Workflow</button>
+        <button id="runWorkflowBtn">▶ Run Workflow</button>
       </div>
     </header>
 
@@ -22,24 +22,43 @@
       </section>
 
       <section class="panel runner-panel">
-        <h2>Cell Runner Panel</h2>
-        <button id="runCellBtn">Run Cell</button>
+        <h2>Cell Runner</h2>
+        <button id="runCellBtn">▶ Run Cell</button>
         <pre id="cellOutput">No cell run yet.</pre>
       </section>
 
       <section class="panel schema-panel">
-        <h2>Visual Schema Inspector</h2>
+        <h2>Schema Inspector</h2>
+        <div class="panel-toolbar">
+          <button id="expandAllBtn" class="btn-sm">Expand All</button>
+          <button id="collapseAllBtn" class="btn-sm">Collapse All</button>
+          <button id="refreshSchemaBtn" class="btn-sm btn-secondary">↺ Refresh</button>
+        </div>
         <ul id="schemaTree"></ul>
       </section>
 
       <section class="panel world-panel">
-        <h2>World State Viewer</h2>
-        <pre id="worldState">Loading...</pre>
+        <h2>World-State Viewer</h2>
+        <div class="panel-toolbar">
+          <button id="refreshWorldBtn" class="btn-sm btn-secondary">↺ Refresh</button>
+          <label class="auto-refresh-label">
+            <input id="autoRefreshToggle" type="checkbox" />
+            Auto-refresh
+          </label>
+          <button id="exportWorldBtn" class="btn-sm btn-secondary">⬇ Export</button>
+          <label class="btn-sm btn-secondary import-label" for="importWorldInput">⬆ Import</label>
+          <input id="importWorldInput" type="file" accept=".json" style="display:none" />
+        </div>
+        <div id="worldStateKV"></div>
       </section>
 
       <section class="panel workflow-panel">
-        <h2>Workflow Runs</h2>
-        <pre id="workflowResult">No workflow run yet.</pre>
+        <h2>Workflow Runner</h2>
+        <div id="workflowHistory"></div>
+        <details id="workflowLatest">
+          <summary>Latest result</summary>
+          <pre id="workflowResult">No workflow run yet.</pre>
+        </details>
       </section>
     </main>
 

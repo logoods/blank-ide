@@ -36,7 +36,7 @@ main {
 }
 
 textarea,
-input,
+input[type="text"],
 button,
 pre {
   width: 100%;
@@ -44,7 +44,7 @@ pre {
 }
 
 textarea,
-input,
+input[type="text"],
 pre {
   border: 1px solid #475569;
   border-radius: 6px;
@@ -67,10 +67,62 @@ button:hover {
 }
 
 pre {
-  min-height: 100px;
+  min-height: 60px;
   overflow: auto;
   white-space: pre-wrap;
 }
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+
+.panel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  width: auto;
+  border-radius: 4px;
+}
+
+.btn-secondary {
+  background: #334155;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+.auto-refresh-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.import-label {
+  display: inline-block;
+  cursor: pointer;
+  border: 0;
+  border-radius: 4px;
+  background: #334155;
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.import-label:hover {
+  background: #475569;
+}
+
+/* ── Workflow controls (header) ──────────────────────────── */
 
 .workflow-controls {
   display: flex;
@@ -82,15 +134,236 @@ pre {
   flex: 1;
 }
 
+/* ── Schema Inspector ────────────────────────────────────── */
+
 #schemaTree {
   list-style: none;
   padding-left: 0;
   margin: 0;
 }
 
-#schemaTree li {
-  margin: 4px 0;
-  padding: 4px 6px;
-  border-left: 2px solid #475569;
+.schema-entity {
+  margin: 6px 0;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.schema-entity-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: #1e293b;
+  cursor: pointer;
+  user-select: none;
+}
+
+.schema-entity-header:hover {
+  background: #273548;
+}
+
+.toggle-icon {
+  font-size: 0.8rem;
+  color: #64748b;
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.entity-name {
+  font-weight: 600;
+  color: #7dd3fc;
+  flex: 1;
+}
+
+.field-count {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.schema-fields {
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
   background: #0f172a;
 }
+
+.schema-field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 10px 4px 24px;
+  border-bottom: 1px solid #1e293b;
+  font-size: 0.85rem;
+}
+
+.schema-field:last-child {
+  border-bottom: none;
+}
+
+.field-name {
+  color: #e2e8f0;
+  flex-shrink: 0;
+}
+
+.field-type {
+  font-size: 0.75rem;
+  color: #a78bfa;
+  background: #1e1040;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.field-desc {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ── World-State Viewer ──────────────────────────────────── */
+
+#worldStateKV {
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.kv-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 0;
+  border-bottom: 1px solid #1e293b;
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+}
+
+.kv-group-header:hover .kv-key {
+  color: #93c5fd;
+}
+
+.kv-key {
+  color: #7dd3fc;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.kv-value {
+  color: #a3e635;
+  word-break: break-all;
+}
+
+.kv-type {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.kv-nested {
+  padding-left: 0;
+}
+
+/* ── Workflow History ─────────────────────────────────────── */
+
+.empty-history {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 4px 0 10px;
+}
+
+.history-item {
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border-left: 3px solid #475569;
+  background: #0f172a;
+  font-size: 0.85rem;
+}
+
+.history-item.status-completed {
+  border-left-color: #22c55e;
+}
+
+.history-item.status-running {
+  border-left-color: #f59e0b;
+}
+
+.history-item.status-failed {
+  border-left-color: #ef4444;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.history-workflow {
+  font-weight: 600;
+  color: #e2e8f0;
+  flex: 1;
+}
+
+.history-time {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.history-id {
+  color: #475569;
+  font-size: 0.72rem;
+  margin-top: 2px;
+  font-family: monospace;
+}
+
+.badge-completed {
+  background: #14532d;
+  color: #86efac;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+.badge-running {
+  background: #451a03;
+  color: #fde68a;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+.badge-failed {
+  background: #450a0a;
+  color: #fca5a5;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+#workflowLatest {
+  margin-top: 8px;
+}
+
+#workflowLatest summary {
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
