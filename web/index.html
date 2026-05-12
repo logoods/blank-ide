@@ -12,56 +12,49 @@
       <div class="workflow-controls">
         <input id="workflowName" type="text" value="default-workflow" />
         <button id="runWorkflowBtn">▶ Run Workflow</button>
+        <button id="saveWorkflowBtn">💾 Save Graph</button>
       </div>
     </header>
 
-    <main>
-      <section class="panel ide-panel">
-        <h2>Web IDE</h2>
-        <textarea id="cellCode" rows="12" placeholder="Write code or instructions for this cell..."></textarea>
-      </section>
-
-      <section class="panel runner-panel">
-        <h2>Cell Runner</h2>
-        <button id="runCellBtn">▶ Run Cell</button>
-        <pre id="cellOutput">No cell run yet.</pre>
-      </section>
-
-      <section class="panel schema-panel">
-        <h2>Schema Inspector</h2>
-        <div class="panel-toolbar">
-          <button id="expandAllBtn" class="btn-sm">Expand All</button>
-          <button id="collapseAllBtn" class="btn-sm">Collapse All</button>
-          <button id="refreshSchemaBtn" class="btn-sm btn-secondary">↺ Refresh</button>
+    <main class="ide-layout">
+      <!-- Left Panel: Node Palette -->
+      <aside class="left-panel panel">
+        <h2>Node Palette</h2>
+        <div class="node-palette">
+          <button class="palette-btn" data-node-type="cell">📦 Cell</button>
+          <button class="palette-btn" data-node-type="input">📥 Input</button>
+          <button class="palette-btn" data-node-type="output">📤 Output</button>
+          <button class="palette-btn" data-node-type="decision">⚙️ Decision</button>
+          <button class="palette-btn" data-node-type="workflow">🔄 Workflow</button>
         </div>
-        <ul id="schemaTree"></ul>
-      </section>
-
-      <section class="panel world-panel">
-        <h2>World-State Viewer</h2>
-        <div class="panel-toolbar">
-          <button id="refreshWorldBtn" class="btn-sm btn-secondary">↺ Refresh</button>
-          <label class="auto-refresh-label">
-            <input id="autoRefreshToggle" type="checkbox" />
-            Auto-refresh
-          </label>
-          <button id="exportWorldBtn" class="btn-sm btn-secondary">⬇ Export</button>
-          <label class="btn-sm btn-secondary import-label" for="importWorldInput">⬆ Import</label>
-          <input id="importWorldInput" type="file" accept=".json" style="display:none" />
+        <div class="panel-section">
+          <h3>Canvas Controls</h3>
+          <button id="clearCanvasBtn" class="btn-sm">🗑️ Clear</button>
+          <button id="fitViewBtn" class="btn-sm">🎯 Fit View</button>
         </div>
-        <div id="worldStateKV"></div>
+      </aside>
+
+      <!-- Center Panel: Canvas -->
+      <section class="center-panel">
+        <div id="canvas" class="whiteboard-canvas"></div>
       </section>
 
-      <section class="panel workflow-panel">
-        <h2>Workflow Runner</h2>
-        <div id="workflowHistory"></div>
-        <details id="workflowLatest">
-          <summary>Latest result</summary>
-          <pre id="workflowResult">No workflow run yet.</pre>
-        </details>
-      </section>
+      <!-- Right Panel: Inspector -->
+      <aside class="right-panel panel">
+        <h2>Inspector</h2>
+        <div id="inspectorContent">
+          <p class="empty-message">Select a node to edit</p>
+        </div>
+      </aside>
     </main>
 
-    <script src="/app.js"></script>
+    <!-- Modular Scripts -->
+    <script src="/js/state.js"></script>
+    <script src="/js/canvas.js"></script>
+    <script src="/js/nodes.js"></script>
+    <script src="/js/edges.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/app.js"></script>
   </body>
 </html>
