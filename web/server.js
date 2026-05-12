@@ -5,6 +5,13 @@ const path = require('path');
 
 const WEB_ROOT = __dirname;
 const PORT = Number(process.env.PORT || 3000);
+const MAX_BODY_BYTES = 1024 * 1024;
+const STATIC_FILES = {
+  '/': 'index.html',
+  '/index.html': 'index.html',
+  '/app.js': 'app.js',
+  '/styles.css': 'styles.css',
+};
 
 const schema = {
   entities: {
@@ -33,21 +40,14 @@ function sendJSON(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-function safePath(urlPath) {
-  const file = urlPath === '/' ? '/index.html' : urlPath;
-  const resolved = path.normalize(path.join(WEB_ROOT, file));
-  if (!resolved.startsWith(WEB_ROOT)) {
-    return null;
-  }
-  return resolved;
-}
-
 function serveStatic(req, res) {
-  const filePath = safePath(req.url.split('?')[0]);
-  if (!filePath) {
+  const requestPath = new URL(req.url, 'http://localhost').pathname;
+  const fileName = STATIC_FILES[requestPath];
+  if (!fileName) {
     sendJSON(res, 400, { error: 'Invalid path' });
     return;
   }
+  const filePath = path.join(WEB_ROOT, fileName);
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
@@ -68,21 +68,27 @@ function serveStatic(req, res) {
 
 function parseBody(req) {
   return new Promise((resolve, reject) => {
-    const maxBytes = 1024 * 1024;
-    const contentLength = Number(req.headers['content-length'] || 0);
-    if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+    const rawContentLength = req.headers['content-length'];
+    const contentLength = Number(rawContentLength);
+    if (rawContentLength === undefined || !Number.isFinite(contentLength) || contentLength < 0) {
+      reject(new Error('Missing or invalid Content-Length'));
+      return;
+    }
+    if (contentLength > MAX_BODY_BYTES) {
       reject(new Error('Payload too large'));
       return;
     }
 
     let body = '';
     let aborted = false;
+    let receivedBytes = 0;
     req.on('data', (chunk) => {
       if (aborted) {
         return;
       }
 
-      if (Buffer.byteLength(body) + chunk.length > maxBytes) {
+      receivedBytes += chunk.length;
+      if (receivedBytes > MAX_BODY_BYTES || receivedBytes > contentLength) {
         aborted = true;
         req.destroy();
         reject(new Error('Payload too large'));
@@ -126,7 +132,7 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'POST' && req.url === '/api/cells/run') {
       const { code = '' } = await parseBody(req);
-      const output = `Cell accepted (${String(code).length} chars)`;
+      const output = `Cell accepted (${`${code}`.length} chars)`;
       worldState.lastCellOutput = output;
       worldState.updatedAt = new Date().toISOString();
       sendJSON(res, 200, { output, status: 'ok', ranAt: worldState.updatedAt });
