@@ -1,4 +1,5 @@
 const http = require('http');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -67,14 +68,32 @@ function serveStatic(req, res) {
 
 function parseBody(req) {
   return new Promise((resolve, reject) => {
+    const maxBytes = 1024 * 1024;
+    const contentLength = Number(req.headers['content-length'] || 0);
+    if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+      reject(new Error('Payload too large'));
+      return;
+    }
+
     let body = '';
+    let aborted = false;
     req.on('data', (chunk) => {
-      body += chunk;
-      if (body.length > 1024 * 1024) {
-        reject(new Error('Payload too large'));
+      if (aborted) {
+        return;
       }
+
+      if (Buffer.byteLength(body) + chunk.length > maxBytes) {
+        aborted = true;
+        req.destroy();
+        reject(new Error('Payload too large'));
+        return;
+      }
+      body += chunk;
     });
     req.on('end', () => {
+      if (aborted) {
+        return;
+      }
       if (!body) {
         resolve({});
         return;
@@ -90,7 +109,7 @@ function parseBody(req) {
 }
 
 function randomId(prefix) {
-  return `${prefix}-${Math.random().toString(16).slice(2, 10)}`;
+  return `${prefix}-${crypto.randomUUID()}`;
 }
 
 const server = http.createServer(async (req, res) => {
